@@ -22,8 +22,8 @@ signal.signal(signal.SIGINT, end_read)
 # Create an object of the class MFRC522
 MIFAREReader = MFRC522.MFRC522()
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+# GPIO.setmode(GPIO.BCM)
+GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 client = MongoClient("mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.net/iot?retryWrites=true&w=majority")
 
@@ -45,9 +45,9 @@ try:
                         # Get the UID of the card
                         (status,uid) = MIFAREReader.MFRC522_Anticoll()
                         current_time = datetime.now()
-                        fsr_status = GPIO.input(4)
+                        fsr_status = GPIO.input(7)
                         if a == 1 and fsr_status == 1:
-                            posts = db.posts
+                            posts = db.fsr_rfid
                             post_data = {
                                 'timestamp': current_time,
                                 'rfid_status': rfid_status,
