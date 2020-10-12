@@ -49,7 +49,7 @@ try:
 
         if rfid_status == 1 and fsr_status == 1:
             print("RFID and Weight Detected")
-            posts = db.fsr_rfid.collection
+            posts = db.fsr_rfid.tray_in
             post_data = {
                 'timestamp': current_time,
                 'rfid_status': rfid_status,
@@ -58,6 +58,5 @@ try:
             result = posts.insert_one(post_data)
             print("Inserted with ID: " + str(result))
         time.sleep(3)
-
 except:
-    print("Something went wrong")
+  print("Something went wrong")
