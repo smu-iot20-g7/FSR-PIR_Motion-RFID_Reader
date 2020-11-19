@@ -47,13 +47,11 @@ THE SOFTWARE.
 # 	if there is constant motion detected, retriggerable will stay high for the duration and non-retriggerable will oscillate between high/low.
 
 import time
-import grovepi
-import RPi.GPIO as GPIO
+# import grovepi
+# import RPi.GPIO as GPIO
 import time
 from datetime import datetime
 from pymongo import MongoClient
-
-
 
 # Connect the Grove PIR Motion Sensor to digital port D8
 # NOTE: Some PIR sensors come with the SIG line connected to the yellow wire and some with the SIG line connected to the white wire.
@@ -64,51 +62,45 @@ db = MongoClient("mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.net
 
 pir_sensor = 7
 motion=0
-grovepi.pinMode(pir_sensor,"INPUT")
-GPIO.setmode(GPIO.BOARD)
+# grovepi.pinMode(pir_sensor,"INPUT")
+# GPIO.setmode(GPIO.BOARD)
 
-GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+# GPIO.setup(7, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 countTray = False
 fsr_bool = False
-while True:
-	try:
-            fsr_status  = GPIO.input(7)
-            print("Weight sensor: " + str(fsr_status))
-            # Sense motion, usually human, within the target range
-            motion=grovepi.digitalRead(pir_sensor)
-            if motion==0 or motion==1:	# check if reads were 0 or 1 it can be 255 also because of IO Errors so remove those values
-                if motion == 1 and countTray and fsr_status == 0:
-                    current_time = datetime.now()
-                    tray_in = db.fsr_rfid.tray_in
-                    post_data = {
-                        'status_count': -1,
-                        'timestamp': current_time,
-                    }
-                    result = tray_in.insert_one(post_data)
-                    print("Stack of Trays removed")
-                    countTray = False
-                if motion==1:
-                    if(fsr_status == 1):
-                        countTray = True
-                    print ('Motion Detected')
-                if(motion == 0 and countTray):
-                        current_time = datetime.now()
-                        tray_in = db.fsr_rfid.tray_in
-                        post_data = {
-                            'status_count': 1,
-                            'timestamp': current_time,
-                        }
-                        result = tray_in.insert_one(post_data)
-                        print("Tray in counted")
-                        countTray = False
-                #if (motion == 0):
-                #   print ('-')
+fsr_status  = 1
+print("Weight sensor: " + str(fsr_status))
+# Sense motion, usually human, within the target range
+motion = 1
+if motion==0 or motion==1:	# check if reads were 0 or 1 it can be 255 also because of IO Errors so remove those values
+    if motion == 1 and countTray and fsr_status == 0:
+        current_time = datetime.now()
+        tray_in = db.fsr_rfid.tray_in_updated
+        post_data = {
+            'status_count': -1,
+            'timestamp': current_time,
+        }
+        result = tray_in.insert_one(post_data)
+        print("Stack of Trays removed")
+        countTray = False
+    if motion==1:
+        if(fsr_status == 1):
+            countTray = True
+            motion = 0
+        print ('Motion Detected')
+    if(motion == 0 and countTray):
+            current_time = datetime.now()
+            tray_in = db.fsr_rfid.tray_in_updated
+            post_data = {
+                'status_count': 1,
+                'timestamp': current_time,
+            }
+            result = tray_in.insert_one(post_data)
+            print("Tray in counted")
+            countTray = False
 
-                # if your hold time is less than this, you might not see as many detections
-            time.sleep(2)
 
-	except IOError:
-		print ("Error")
+
     
