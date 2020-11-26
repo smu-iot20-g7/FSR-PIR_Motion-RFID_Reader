@@ -103,10 +103,6 @@ while True:
                         result = tray_in.insert_one(post_data)
                         print("Tray in counted")
                         countTray = False
-                #if (motion == 0):
-                #   print ('-')
-
-                # if your hold time is less than this, you might not see as many detections
             time.sleep(2)
 
 	except IOError:

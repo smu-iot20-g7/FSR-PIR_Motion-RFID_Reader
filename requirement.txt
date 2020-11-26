@@ -1,0 +1,11 @@
+
+
+pymongo==3.11.1
+mfrc522=-0.0.7
+RPi.GPIO==0.7.0
+grovepi==1.0.4
+
+
+
+
+
